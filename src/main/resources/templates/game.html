@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <link href="/css/game.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="upper-bar">
+        <div id="profile">
+            <img src="/Photos/Athena%20Cykes.png" width="40" height="40" alt="Profile">
+            <a href="/profile">Player Name</a>
+        </div>
+        <a href="/lobby">Chess.io</a>
+        <div id="options">
+            <img src="/Photos/dark-theme-icon.png" id="UI-COLOR" width="40" height="40">
+        </div>
+    </div>
+
+    <div id="game">
+        <div id="gameplay">
+            <div id="top-info">
+                <div id="player1" th:text="${Username_one}">Player 1</div>
+                <div id="timer1" th:text="${Minutes_one < 10 ? '0' + Minutes_one : Minutes_one} + ':' + ${Seconds_one < 10 ? '0' + Seconds_one : Seconds_one}">Timer 1</div>
+            </div>
+
+            <div id="board">
+                <!-- JS -->
+            </div>
+
+            <div id="bottom-info">
+                <div id="player2" th:text="${Username_two}">Player 2</div>
+                <div id="timer2" th:text="${Minutes_two < 10 ? '0' + Minutes_two : Minutes_two} + ':' + ${Seconds_two < 10 ? '0' + Seconds_two : Seconds_two}">Timer 2</div>
+            </div>
+        </div>
+
+        <div id="game-statistics">
+            <p id="game-statistics-p">Move History</p>
+            <div id="board-history">
+                <!-- JS -->
+            </div>
+            <form action="/draw" method="POST">
+                <button type="submit" id="draw-button">Draw</button>
+            </form>
+            <form action="/surrender" method="POST">
+                <button type="submit" id="surrender-button">Surrender</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+    var Pieces_Colors = [[${Pieces_Colors}]];
+    var Pieces_Types = [[${Pieces_Types}]];
+    var previous_piece_clicked = null;
+
+    // Chess board generator
+    const board = document.getElementById("board");
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    for (let i = 8; i >= 1; i--){
+        for (let j = 0; j <= 7; j++){
+            let new_div = document.createElement("div");
+            new_div.classList.add("square");
+            new_div.id = `${letters[j]}${i}`;
+
+            if ((j + i) % 2){
+                new_div.style.backgroundColor = "#b58863";
+            }else{
+                new_div.style.backgroundColor = "#f0d9b5";
+            }
+
+            new_div.style.backgroundSize = "cover";
+            new_div.style.backgroundPosition = "center";
+            new_div.style.backgroundRepeat = "no-repeat";
+
+            switch (Pieces_Colors[i][j+1]){
+                case "Black":
+                    switch (Pieces_Types[i][j+1]){
+                        case "Pawn":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/bp.png')";
+                            break;
+                        case "Knight":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/bn.png')";
+                            break;
+                        case "Bishop":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/bb.png')";
+                            break;
+                        case "Rook":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/br.png')";
+                            break;
+                        case "Queen":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/bq.png')";
+                            break;
+                        case "King":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/bk.png')";
+                            break;
+                    }
+                    break;
+                case "White":
+                    switch (Pieces_Types[i][j+1]){
+                        case "Pawn":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wp.png')";
+                            break;
+                        case "Knight":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wn.png')";
+                            break;
+                        case "Bishop":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wb.png')";
+                            break;
+                        case "Rook":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wr.png')";
+                            break;
+                        case "Queen":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wq.png')";
+                            break;
+                        case "King":
+                            new_div.style.backgroundImage = "url('/Photos/Chess_pieces/wk.png')";
+                            break;
+                    }
+                    break;
+            }
+
+            new_div.onclick = function (){
+                // No other piece displayed | Display piece
+                if (previous_piece_clicked == null && new_div.style.backgroundImage !== ""){
+                    console.log("one");
+                    previous_piece_clicked = new_div;
+                    onPieceClick(new_div, "Display");
+                }
+                // Piece displayed | Display Piece
+                else if (previous_piece_clicked != null && new_div.style.backgroundImage !== "" && new_div !== previous_piece_clicked){
+                    console.log("two");
+                    onPieceClick(previous_piece_clicked, "Hide");
+                    onPieceClick(new_div, "Display");
+                    previous_piece_clicked = new_div;
+                }
+                // Piece displayed | Hide piece
+                else if(new_div === previous_piece_clicked || (previous_piece_clicked != null && getComputedStyle(new_div).backgroundColor !== "rgb(248, 118, 104)" && getComputedStyle(new_div).backgroundColor !== "rgb(204, 79, 73)")){
+                    console.log("three");
+                    onPieceClick(previous_piece_clicked, "Hide");
+                    previous_piece_clicked = null;
+                }
+                // Piece displayed | MOVE piece
+                else if (previous_piece_clicked != null && (getComputedStyle(new_div).backgroundColor === "rgb(248, 118, 104)" || getComputedStyle(new_div).backgroundColor === "rgb(204, 79, 73)")){
+                    onPieceClick(previous_piece_clicked, "Hide");
+                    MovePiece(previous_piece_clicked.id, new_div.id);
+                    previous_piece_clicked = null;
+                }
+            }
+
+            board.appendChild(new_div);
+        }
+    }
+
+    // Display the moves
+    function onPieceClick(pieceElement, action) {
+        const position = pieceElement.id;
+        const gameId = getCurrentGameId();
+
+        fetch('/displayMoves', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+                Position: position
+            })
+        })
+            .then(response => response.json())
+            .then(moves => {
+                if (action === "Display") highlightPossibleMoves(moves);
+                else if (action === "Hide") hidePossibleMoves(moves);
+            })
+            .catch(error => {
+                console.error("Error getting moves:", error);
+            });
+    }
+
+    function MovePiece(source, destination){
+        const gameId = getCurrentGameId();
+        fetch('/PieceMoves', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+                Source: source,
+                Destination: destination
+            })
+        })
+            .then(response => response.json())
+            .then(moves => {
+                console.log(moves);
+            })
+            .catch(error => {
+                console.error("Error getting moves:", error);
+            });
+    }
+
+    function getCurrentGameId() {
+        const pathParts = window.location.pathname.split('/');
+        return pathParts[pathParts.length - 1]; // Game ID is the last part of the path
+    }
+    function highlightPossibleMoves(moves){
+        for (let i in moves){
+            let square = document.getElementById(moves[i]);
+            let row = parseInt(moves[i][1]);
+            let col = moves[i][0].charCodeAt(0) - 64;
+            if ((row+col) % 2) square.style.backgroundColor = "#f87668";
+            else square.style.backgroundColor = "#cc4f49";
+        }
+    }
+    function hidePossibleMoves(moves){
+        for (let i in moves){
+            let square = document.getElementById(moves[i]);
+            let row = parseInt(moves[i][1]);
+            let col = moves[i][0].charCodeAt(0) - 64;
+            if ((row+col) % 2) square.style.backgroundColor = "#f0d9b5";
+            else square.style.backgroundColor = "#b58863";
+        }
+    }
+    // Commit a move
+
+
+
+
+    // Dark/Light mode
+    if (localStorage.getItem("Screen") === "light") {
+        document.body.style.backgroundColor = "#d3d3d3";
+        document.getElementById("game-statistics-p").style.color = "#1a1a1a"
+    } else if (localStorage.getItem("Screen") === "dark") {
+        document.body.style.backgroundColor = "#1a1a1a";
+        document.getElementById("game-statistics-p").style.color = "#fcfcfc"
+    }
+
+    document.getElementById("UI-COLOR").onclick = function () {
+        const currentBg = getComputedStyle(document.body).backgroundColor;
+        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
+            document.body.style.backgroundColor = "#1a1a1a";
+            document.getElementById("game-statistics-p").style.color = "#fcfcfc"
+            localStorage.setItem("Screen", "dark");
+        } else {  // Light background
+            document.body.style.backgroundColor = "#d3d3d3";
+            document.getElementById("game-statistics-p").style.color = "#1a1a1a"
+            localStorage.setItem("Screen", "light");
+        }
+    };
+</script>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link href="/css/profile.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+    <div id="upper-bar">
+        <a href="/lobby">Chess.io</a>
+        <div id="options">
+            <img src="/Photos/dark-theme-icon.png" id="UI-COLOR" width="40" height="40">
+            <img src="/Photos/Friends.png" id="Friends" width="40" height="40">
+            <img src="/Photos/Invite.png" id="Invite" width="40" height="40">
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header" id="profile_header">
+            <img src="/Photos/Athena%20Cykes.png" class="avatar">
+            <h2>MagnusKing123</h2>
+        </div>
+
+        <div class="stats">
+            <h4>Joined in: 4 Jan 2024</h4>
+            <br>
+            <h3>Stats Overview</h3>
+            <ul>
+                <li>Rating: 2410</li>
+                <li>Games Played: 320</li>
+                <li>Win Rate: 64%</li>
+                <li>Best Rating: 2480</li>
+            </ul>
+        </div>
+
+        <div class="recent-games">
+            <h3>Recent Games</h3>
+            <ul>
+                <li>vs ChessGuru99 - Win</li>
+                <li>vs KnightSlayer - Loss</li>
+                <li>vs RookRanger - Win</li>
+            </ul>
+            <a href="#">View All</a>
+        </div>
+
+        <div class="friends">
+            <h3>Friends</h3>
+            <ul>
+                <li><a href="#">QueenCrusher</a></li>
+                <li><a href="#">EndgameExpert</a></li>
+                <li><a href="#">PawnMaster9000</a></li>
+            </ul>
+            <a href="#">View All</a>
+        </div>
+
+        <div id="people">
+            <h3 id="people-title"></h3>
+            <ul id="people-list">
+                <!-- List of friends or invites will go here -->
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    // Dark/Light mode
+    const text = document.querySelectorAll("li, a, h3, h2, h4");
+    if (localStorage.getItem("Screen") === "light") {
+        document.body.style.backgroundColor = "#d3d3d3";
+        text.forEach(t => {
+            t.style.color = "black";
+        });
+        document.getElementById("profile_header").style.borderBottom = "2px solid black";
+    } else if (localStorage.getItem("Screen") === "dark") {
+        document.body.style.backgroundColor = "#1a1a1a";
+        text.forEach(t => {
+            t.style.color = "white";
+        });
+        document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
+    }
+
+    document.getElementById("UI-COLOR").onclick = function () {
+        const currentBg = getComputedStyle(document.body).backgroundColor;
+        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
+            document.body.style.backgroundColor = "#1a1a1a";
+            localStorage.setItem("Screen", "dark");
+            text.forEach(t => {
+                t.style.color = "white";
+            });
+            document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
+        } else {  // Light background
+            document.body.style.backgroundColor = "#d3d3d3";
+            localStorage.setItem("Screen", "light");
+            text.forEach(t => {
+                t.style.color = "black";
+            });
+            document.getElementById("profile_header").style.borderBottom = "2px solid black";
+        }
+    };
+
+    const friends = ['John', 'Jane', 'Alice', 'Bob'];
+    const invites = ['Mike', 'Emma', 'Charlie'];
+
+    // Function to show the popup with friends list
+    function showPopup(title, list) {
+        const popup = document.getElementById('people');
+        const popupTitle = document.getElementById('people-title');
+        const popupList = document.getElementById('people-list');
+
+        // Set title
+        popupTitle.textContent = title;
+
+        // Clear the existing list
+        popupList.innerHTML = '';
+
+        // Create and append list items
+        list.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            popupList.appendChild(li);
+        });
+
+        // Show the popup
+        popup.style.display = 'block';
+    }
+
+    // Hide the popup when clicking outside of it
+    document.addEventListener('click', function(event) {
+        const popup = document.getElementById('people');
+        if (!popup.contains(event.target) && event.target !== document.getElementById('Friends') && event.target !== document.getElementById('Invite')) {
+            popup.style.display = 'none';
+        }
+    });
+
+    // Event listener for the "Friends" image
+    document.getElementById('Friends').onclick = function() {
+        showPopup('Friends List', friends);
+    };
+
+    // Event listener for the "Invite" image
+    document.getElementById('Invite').onclick = function() {
+        showPopup('Invite People', invites);
+    };
+</script>
+</html>

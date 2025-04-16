@@ -1,0 +1,179 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d3d3d3;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#upper-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+}
+
+#profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#profile img {
+    border-radius: 50%;
+    border: 2px solid #4fc3f7;
+}
+
+#profile a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+#profile a:hover {
+    color: #4fc3f7;
+}
+
+/* Center Title */
+#upper-bar > a[href="/lobby"] {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.6rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+#upper-bar > a[href="/lobby"]:hover {
+    color: #4fc3f7;
+}
+
+/* Options Icons */
+#options {
+    display: flex;
+    gap: 15px;
+}
+
+#options img {
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    border-radius: 50%;
+}
+
+#options img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+#game-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 80%;
+    max-width: 800px;
+    margin-top: 20px;
+}
+
+.game-button {
+    flex: 1;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #d3d3d3;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.game-button:hover {
+    background-color: #afafaf;
+}
+
+.settings-box {
+    background-color: #d3d3d3;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 20px auto;
+}
+
+.settings-box p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.settings-box div {
+    margin-bottom: 15px;
+}
+
+.settings-box input[type="radio"] {
+    margin-right: 2px;
+}
+
+.settings-box label {
+    font-size: 16px;
+    margin-right: 20px;
+}
+
+.settings-box button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.settings-box button:hover {
+    background-color: #0056b3;
+}
+
+.settings-box input[type="radio"]:checked + label {
+    font-weight: bold;
+    color: #002a5b;
+}
+
+#people{
+    display: none;
+    position: fixed;
+    right: 10px;
+    top: 70px;
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+}
+#people-title{
+    padding-bottom: 20px;
+}
+#people-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}

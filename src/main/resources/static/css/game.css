@@ -1,0 +1,151 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d3d3d3;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#upper-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+}
+
+#profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#profile img {
+    border-radius: 50%;
+    border: 2px solid #4fc3f7;
+    transition: transform 0.2s ease;
+}
+
+#profile img:hover {
+    transform: scale(1.05);
+}
+
+#profile a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+#profile a:hover {
+    color: #4fc3f7;
+}
+
+#upper-bar > a[href="/lobby"] {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.6rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#upper-bar > a[href="/lobby"]:hover {
+    color: #4fc3f7;
+}
+
+#options {
+    display: flex;
+    gap: 15px;
+}
+
+#options img {
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    border-radius: 50%;
+}
+
+#options img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+#game {
+    display: flex;
+    justify-content: flex-start;
+    gap: 40px;
+    padding: 20px;
+    align-items: flex-start;
+}
+
+#gameplay {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#top-info,
+#bottom-info {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    margin: 10px 0;
+    border: 2px solid black;
+    background-color: #d3d3d3;
+    padding: 10px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 400px;
+    height: 400px;
+    border: 1px solid #333;
+}
+
+#board-history{
+    height: 400px;
+    border: 1px solid black;
+    width: 400px;
+    overflow-y: auto;
+    background-color: #d3d3d3;
+}
+
+#game-statistics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#draw-button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#surrender-button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.square {
+    width: 100%;
+    height: 100%;
+}

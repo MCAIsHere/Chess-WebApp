@@ -1,0 +1,118 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d3d3d3;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#upper-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Logo / Brand Link */
+#upper-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+#upper-bar a:hover {
+    color: #4fc3f7;
+}
+
+/* Options Container */
+#options {
+    display: flex;
+    gap: 15px;
+}
+
+/* Icons Styling */
+#options img {
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    border-radius: 50%;
+}
+
+#options img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.profile-header {
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+}
+
+.avatar {
+    height: 120px;
+    width: 120px;
+    padding: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.stats, .recent-games, .friends {
+    margin-top: 25px;
+}
+
+.badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background-color: #eee;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+#people{
+    display: none;
+    position: fixed;
+    right: 10px;
+    top: 70px;
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+}
+#people-title{
+    padding-bottom: 20px;
+}
+#people-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}

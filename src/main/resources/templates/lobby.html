@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Lobby Page</title>
+    <link href="/css/lobby.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="upper-bar">
+        <div id="profile">
+            <img src="/Photos/Athena%20Cykes.png" width="40" height="40" alt="Profile">
+            <a href="/profile">Player Name</a>
+        </div>
+        <a href="/lobby">Chess.io</a>
+        <div id="options">
+            <img src="/Photos/dark-theme-icon.png" id="UI-COLOR" width="40" height="40">
+            <img src="/Photos/Friends.png" id="Friends" width="40" height="40">
+            <img src="/Photos/Invite.png" id="Invite" width="40" height="40">
+        </div>
+    </div>
+    <div id="game-options">
+        <div id="find-match" class="game-button">Find Match</div>
+        <div id="create-match" class="game-button">Create Match</div>
+    </div>
+
+    <form action="/find" method="POST" id="find-match-settings" class="settings-box" style="display: none">
+        <p>Time</p>
+        <div>
+            <input type="radio" name="find_time" value="3" required><label>3 Min</label>
+            <input type="radio" name="find_time" value="5"><label>5 Min</label>
+            <input type="radio" name="find_time" value="10"><label>10 Min</label>
+        </div>
+        <p>Match type</p>
+        <div style="margin-top: 10px;">
+            <input type="radio" name="find_type" value="casual" required><label>Casual</label>
+            <input type="radio" name="find_type" value="competitive"><label>Competitive</label>
+        </div>
+        <button type="submit">Play</button>
+    </form>
+    <form action="/create" method="POST" id="create-match-settings" class="settings-box" style="display: none">
+        <p>Time</p>
+        <div>
+            <input type="radio" name="create_time" value="3" required><label>3 Min</label>
+            <input type="radio" name="create_time" value="5"><label>5 Min</label>
+            <input type="radio" name="create_time" value="10"><label>10 Min</label>
+        </div>
+        <p>Match type</p>
+        <div style="margin-top: 10px;">
+            <input type="radio" name="create_type" value="casual" required><label>Casual</label>
+            <input type="radio" name="create_type" value="competitive"><label>Competitive</label>
+        </div>
+        <div style="display: flex; text-align: center; margin-top: 10px;" >
+            <input type="checkbox" id="friendly-match" name="friendly" value="1"><label>Friendly match</label>
+        </div>
+        <button type="submit">Play</button>
+    </form>
+
+    <div id="people">
+        <h3 id="people-title"></h3>
+        <ul id="people-list">
+            <!-- List of friends or invites will go here -->
+        </ul>
+    </div>
+</body>
+<script>
+    // Dark/Light mode
+    if (localStorage.getItem("Screen") === "light") {
+        document.body.style.backgroundColor = "#d3d3d3";
+    } else if (localStorage.getItem("Screen") === "dark") {
+        document.body.style.backgroundColor = "#1a1a1a";
+    }
+
+    document.getElementById("UI-COLOR").onclick = function () {
+        const currentBg = getComputedStyle(document.body).backgroundColor;
+        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
+            document.body.style.backgroundColor = "#1a1a1a";
+            localStorage.setItem("Screen", "dark");
+        } else {  // Light background
+            document.body.style.backgroundColor = "#d3d3d3";
+            localStorage.setItem("Screen", "light");
+        }
+    };
+
+    // Pre-game settings
+    document.getElementById("find-match").onclick = function (){
+        document.getElementById("find-match-settings").style.display = "block";
+        document.getElementById("create-match-settings").style.display = "none";
+    }
+
+    document.getElementById("create-match").onclick = function (){
+        document.getElementById("create-match-settings").style.display = "block";
+        document.getElementById("find-match-settings").style.display = "none";
+    }
+
+    // People list
+
+    const friends = ['John', 'Jane', 'Alice', 'Bob'];
+    const invites = ['Mike', 'Emma', 'Charlie'];
+
+    // Function to show the popup with friends list
+    function showPopup(title, list) {
+        const popup = document.getElementById('people');
+        const popupTitle = document.getElementById('people-title');
+        const popupList = document.getElementById('people-list');
+
+        // Set title
+        popupTitle.textContent = title;
+
+        // Clear the existing list
+        popupList.innerHTML = '';
+
+        // Create and append list items
+        list.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            popupList.appendChild(li);
+        });
+
+        // Show the popup
+        popup.style.display = 'block';
+    }
+
+    // Hide the popup when clicking outside of it
+    document.addEventListener('click', function(event) {
+        const popup = document.getElementById('people');
+        if (!popup.contains(event.target) && event.target !== document.getElementById('Friends') && event.target !== document.getElementById('Invite')) {
+            popup.style.display = 'none';
+        }
+    });
+
+    // Event listener for the "Friends" image
+    document.getElementById('Friends').onclick = function() {
+        showPopup('Friends List', friends);
+    };
+
+    // Event listener for the "Invite" image
+    document.getElementById('Invite').onclick = function() {
+        showPopup('Invite People', invites);
+    };
+</script>
+</html>
