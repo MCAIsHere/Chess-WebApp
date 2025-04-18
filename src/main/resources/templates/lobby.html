@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Lobby Page</title>
     <link href="/css/lobby.css" rel="stylesheet" type="text/css">
@@ -8,7 +8,7 @@
     <div id="upper-bar">
         <div id="profile">
             <img src="/Photos/Athena%20Cykes.png" width="40" height="40" alt="Profile">
-            <a href="/profile">Player Name</a>
+            <a href="/profile" th:text="${Username}">PLayer Username</a>
         </div>
         <a href="/lobby">Chess.io</a>
         <div id="options">
@@ -54,14 +54,20 @@
         <button type="submit">Play</button>
     </form>
 
-    <div id="people">
-        <h3 id="people-title"></h3>
-        <ul id="people-list">
+    <div id="friends-tab">
+        <h3 id="friends-title"></h3>
+        <ul id="friends-list">
+            <!-- List of friends or invites will go here -->
+        </ul>
+    </div>
+    <div id="invites-tab">
+        <h3 id="invites-title"></h3>
+        <ul id="invites-list">
             <!-- List of friends or invites will go here -->
         </ul>
     </div>
 </body>
-<script>
+<script th:inline="javascript">
     // Dark/Light mode
     if (localStorage.getItem("Screen") === "light") {
         document.body.style.backgroundColor = "#d3d3d3";
@@ -92,49 +98,55 @@
     }
 
     // People list
+    // Friends
+    const friends_tab = document.getElementById('friends-tab');
+    const friends_title = document.getElementById('friends-title');
+    const friends_list = document.getElementById('friends-list');
+    const Friends = [[${Friends}]];
 
-    const friends = ['John', 'Jane', 'Alice', 'Bob'];
-    const invites = ['Mike', 'Emma', 'Charlie'];
+    friends_title.textContent = "Friends";
 
-    // Function to show the popup with friends list
-    function showPopup(title, list) {
-        const popup = document.getElementById('people');
-        const popupTitle = document.getElementById('people-title');
-        const popupList = document.getElementById('people-list');
-
-        // Set title
-        popupTitle.textContent = title;
-
-        // Clear the existing list
-        popupList.innerHTML = '';
-
-        // Create and append list items
-        list.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            popupList.appendChild(li);
-        });
-
-        // Show the popup
-        popup.style.display = 'block';
-    }
-
-    // Hide the popup when clicking outside of it
-    document.addEventListener('click', function(event) {
-        const popup = document.getElementById('people');
-        if (!popup.contains(event.target) && event.target !== document.getElementById('Friends') && event.target !== document.getElementById('Invite')) {
-            popup.style.display = 'none';
-        }
+    Friends.forEach(friend => {
+        const li = document.createElement('li');
+        li.textContent = friend;
+        friends_list.appendChild(li);
     });
 
-    // Event listener for the "Friends" image
     document.getElementById('Friends').onclick = function() {
-        showPopup('Friends List', friends);
+        if (friends_tab.style.display === 'block'){
+            friends_tab.style.display = 'none';
+        }else{
+            friends_tab.style.display = 'block';
+            invites_tab.style.display = 'none';
+        }
     };
 
-    // Event listener for the "Invite" image
+    // Invites
+    const invites_tab = document.getElementById('invites-tab');
+    const invites_title = document.getElementById('invites-title');
+    const invites_list = document.getElementById('invites-list');
+
+    invites_title.textContent = "Invites";
+
     document.getElementById('Invite').onclick = function() {
-        showPopup('Invite People', invites);
+        if (invites_tab.style.display === 'block'){
+            friends_tab.style.display = 'none'
+        }else{
+            invites_tab.style.display = 'block';
+            friends_tab.style.display = 'none';
+        }
     };
+
+    document.addEventListener('click', function (event) {
+        const isInsideTabs = friends_tab.contains(event.target) ||
+                             invites_tab.contains(event.target) ||
+                             event.target.id === 'Friends' ||
+                             event.target.id === 'Invite';
+
+        if (!isInsideTabs) {
+            friends_tab.style.display = 'none';
+            invites_tab.style.display = 'none';
+        }
+    });
 </script>
 </html>

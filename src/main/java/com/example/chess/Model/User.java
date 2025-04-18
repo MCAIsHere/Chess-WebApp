@@ -36,4 +36,10 @@ public class User {
 
     public String getId() {return Id;}
     public String getUsername() {return Username;}
+    public List<User> getFriends(){
+        return Friends;
+    }
+    public void AddFriend(User user){
+        Friends.add(user);
+    }
 }

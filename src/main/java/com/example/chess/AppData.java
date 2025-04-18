@@ -22,6 +22,8 @@ public class AppData {
         Users.add(new User("1", "Catalin", new Byte[]{1, 2, 3}));
         Users.add(new User("2", "Popa", new Byte[]{4, 5, 6}));
         Users.add(new User("3", "Rares", new Byte[]{7, 8, 9}));
+        Users.get(0).AddFriend(Users.get(1));
+        Users.get(0).AddFriend(Users.get(2));
     }
 
     public Match getMatchById(String id) {

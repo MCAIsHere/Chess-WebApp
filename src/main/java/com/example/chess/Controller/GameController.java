@@ -74,16 +74,19 @@ public class GameController {
         }
 
         Piece[][] board = match.getBoard();
-
         int row = Character.getNumericValue(Position.charAt(1));
         int col = Position.charAt(0) - 'A' + 1;
 
-        /*
-        System.out.println(row);
-        System.out.println(col);
-        System.out.println(board[row][col].getMoves(row,col,board));
-        */
-        return board[row][col].getMoves(row,col,board);
+        if (board != null){
+            /*
+            System.out.println(row);
+            System.out.println(col);
+            System.out.println(board[row][col].getMoves(row,col,board));
+            */
+            return board[row][col].getMoves(row,col,board);
+        }
+
+        return null;
     }
 
     @PostMapping("/PieceMoves")
