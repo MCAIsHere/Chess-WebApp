@@ -95,7 +95,7 @@ body {
     border-radius: 10px;
 }
 
-#people{
+#friends-tab, #invites-tab{
     display: none;
     position: fixed;
     right: 10px;
@@ -108,10 +108,10 @@ body {
     padding: 20px;
     overflow-y: auto;
 }
-#people-title{
+#friends-title, #invites-title{
     padding-bottom: 20px;
 }
-#people-list {
+#friends-list, #invites-list {
     list-style-type: none;
     padding: 0;
     margin: 0;

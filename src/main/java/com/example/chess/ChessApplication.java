@@ -9,12 +9,8 @@ public class ChessApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ChessApplication.class, args);
-        openBrowser("http://localhost:8080/lobby");
-    }
-
-    private static void openBrowser(String url) {
         try {
-            String command = "cmd.exe /c start firefox " + url;
+            String command = "cmd.exe /c start firefox http://localhost:8080/lobby";
             Runtime.getRuntime().exec(command);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
@@ -18,63 +18,58 @@
     <div class="profile-container">
         <div class="profile-header" id="profile_header">
             <img src="/Photos/Judgeline.png" class="avatar">
-            <h2>Username</h2>
+            <h2 class="profile-text" th:text="${Username}">Username</h2>
         </div>
 
         <div class="stats">
-            <h4>Joined in: 4 Jan 2024</h4>
+            <h4 class="profile-text">Joined in: 4 Jan 2024</h4>
             <br>
-            <h3>Stats Overview</h3>
+            <h3 class="profile-text">Stats Overview</h3>
             <ul>
-                <li>Rating: 2410</li>
-                <li>Games Played: 320</li>
-                <li>Win Rate: 64%</li>
-                <li>Best Rating: 2480</li>
+                <li class="profile-text">Rating: 2410</li>
+                <li class="profile-text">Games Played: 320</li>
+                <li class="profile-text">Win Rate: 64%</li>
+                <li class="profile-text">Best Rating: 2480</li>
             </ul>
         </div>
 
         <div class="recent-games">
-            <h3>Recent Games</h3>
+            <h3 class="profile-text">Recent Games</h3>
             <ul>
-                <li>vs a - Win</li>
-                <li>vs b - Loss</li>
-                <li>vs c - Win</li>
+                <li class="profile-text">vs a - Win</li>
+                <li class="profile-text">vs b - Loss</li>
+                <li class="profile-text">vs c - Win</li>
             </ul>
-            <a href="#">View All</a>
-        </div>
-
-        <div class="friends">
-            <h3>Friends</h3>
-            <ul>
-                <li><a href="#">d</a></li>
-                <li><a href="#">e</a></li>
-                <li><a href="#">f</a></li>
-            </ul>
-            <a href="#">View All</a>
-        </div>
-
-        <div id="people">
-            <h3 id="people-title"></h3>
-            <ul id="people-list">
-                <!-- List of friends or invites will go here -->
-            </ul>
+            <a href="#" class="profile-text">View All</a>
         </div>
     </div>
+    <div id="friends-tab">
+        <h3 id="friends-title"></h3>
+        <ul id="friends-list">
+            <!-- List of friends will go here -->
+        </ul>
+    </div>
+    <div id="invites-tab">
+        <h3 id="invites-title"></h3>
+        <ul id="invites-list">
+            <!-- List of invites will go here -->
+        </ul>
+    </div>
 </body>
-<script>
+<script th:inline="javascript">
     // Dark/Light mode
-    const text = document.querySelectorAll("li, a, h3, h2, h4");
+    const profile_text = document.getElementsByClassName("profile-text");
     if (localStorage.getItem("Screen") === "light") {
         document.body.style.backgroundColor = "#d3d3d3";
-        text.forEach(t => {
-            t.style.color = "black";
-        });
+        for (let i = 0; i < profile_text.length; i++) {
+            profile_text[i].style.color = "black";
+        }
         document.getElementById("profile_header").style.borderBottom = "2px solid black";
     } else if (localStorage.getItem("Screen") === "dark") {
         document.body.style.backgroundColor = "#1a1a1a";
-        text.forEach(t => {
-            t.style.color = "white";
-        });
+        for (let i = 0; i < profile_text.length; i++) {
+            profile_text[i].style.color = "white";
+        }
         document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
     }
 
@@ -83,62 +78,70 @@
         if (currentBg === "rgb(211, 211, 211)") {  // Dark background
             document.body.style.backgroundColor = "#1a1a1a";
             localStorage.setItem("Screen", "dark");
-            text.forEach(t => {
-                t.style.color = "white";
-            });
+            for (let i = 0; i < profile_text.length; i++) {
+                profile_text[i].style.color = "white";
+            }
             document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
         } else {  // Light background
             document.body.style.backgroundColor = "#d3d3d3";
             localStorage.setItem("Screen", "light");
-            text.forEach(t => {
-                t.style.color = "black";
-            });
+            for (let i = 0; i < profile_text.length; i++) {
+                profile_text[i].style.color = "black";
+            }
             document.getElementById("profile_header").style.borderBottom = "2px solid black";
         }
     };
 
-    const friends = ['John', 'Jane', 'Alice', 'Bob'];
-    const invites = ['Mike', 'Emma', 'Charlie'];
+    // People list
+    // Friends
+    const friends_tab = document.getElementById('friends-tab');
+    const friends_title = document.getElementById('friends-title');
+    const friends_list = document.getElementById('friends-list');
+    const Friends = [[${Friends}]];
 
-    // Function to show the popup with friends list
-    function showPopup(title, list) {
-        const popup = document.getElementById('people');
-        const popupTitle = document.getElementById('people-title');
-        const popupList = document.getElementById('people-list');
+    friends_title.textContent = "Friends";
 
-        // Set title
-        popupTitle.textContent = title;
-
-        // Clear the existing list
-        popupList.innerHTML = '';
-
-        // Create and append list items
-        list.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            popupList.appendChild(li);
-        });
-
-        // Show the popup
-        popup.style.display = 'block';
-    }
-
-    // Hide the popup when clicking outside of it
-    document.addEventListener('click', function(event) {
-        const popup = document.getElementById('people');
-        if (!popup.contains(event.target) && event.target !== document.getElementById('Friends') && event.target !== document.getElementById('Invite')) {
-            popup.style.display = 'none';
-        }
+    Friends.forEach(friend => {
+        const li = document.createElement('li');
+        li.textContent = friend;
+        friends_list.appendChild(li);
     });
 
-    // Event listener for the "Friends" image
     document.getElementById('Friends').onclick = function() {
-        showPopup('Friends List', friends);
+        if (friends_tab.style.display === 'block'){
+            friends_tab.style.display = 'none';
+        }else{
+            friends_tab.style.display = 'block';
+            invites_tab.style.display = 'none';
+        }
     };
 
-    // Event listener for the "Invite" image
+    // Invites
+    const invites_tab = document.getElementById('invites-tab');
+    const invites_title = document.getElementById('invites-title');
+    const invites_list = document.getElementById('invites-list');
+
+    invites_title.textContent = "Invites";
+
     document.getElementById('Invite').onclick = function() {
-        showPopup('Invite People', invites);
+        if (invites_tab.style.display === 'block'){
+            friends_tab.style.display = 'none'
+        }else{
+            invites_tab.style.display = 'block';
+            friends_tab.style.display = 'none';
+        }
     };
+
+    document.addEventListener('click', function (event) {
+        const isInsideTabs = friends_tab.contains(event.target) ||
+                            invites_tab.contains(event.target) ||
+                            event.target.id === 'Friends' ||
+                            event.target.id === 'Invite';
+
+        if (!isInsideTabs) {
+            friends_tab.style.display = 'none';
+            invites_tab.style.display = 'none';
+        }
+    });
 </script>
 </html>
