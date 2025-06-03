@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Game</title>
     <link href="/css/game.css" rel="stylesheet" type="text/css">
+    <script src="/js/light_dark.js"></script>
 </head>
 <body>
     <div id="upper-bar">
@@ -19,6 +20,15 @@
 
     <div id="game">
         <div id="gameplay">
+            <!-- Promotion Modal (hidden by default) -->
+            <div id="promotionModal" style="display: none;">
+                <h3>Promote Pawn To:</h3>
+                <button onclick="ChoosePromotion('QUEEN')">Queen</button>
+                <button onclick="ChoosePromotion('ROOK')">Rook</button>
+                <button onclick="ChoosePromotion('BISHOP')">Bishop</button>
+                <button onclick="ChoosePromotion('KNIGHT')">Knight</button>
+            </div>
+
             <div id="top-info">
                 <div id="player1" th:text="${Username_one}">Player 1</div>
                 <div id="timer1" th:text="${Minutes_one < 10 ? '0' + Minutes_one : Minutes_one} + ':' + ${Seconds_one < 10 ? '0' + Seconds_one : Seconds_one}">Timer 1</div>
@@ -52,7 +62,10 @@
 <script th:inline="javascript">
     var Pieces_Colors = [[${Pieces_Colors}]];
     var Pieces_Types = [[${Pieces_Types}]];
+    var History = [[${Statistics}]];
     var previous_piece_clicked = null;
+    var previous_square_colored = null;
+    var promotionDestination = null;
 
     // Chess board generator
     const board = document.getElementById("board");
@@ -121,30 +134,29 @@
             }
 
             new_div.onclick = function (){
-                // No other piece displayed | Display piece
-                if (previous_piece_clicked == null && new_div.style.backgroundImage !== ""){
-                    console.log("one");
-                    previous_piece_clicked = new_div;
-                    onPieceClick(new_div, "Display");
+                if (document.getElementById("promotionModal").style.display === "block") return;
+
+                // Piece displayed | MOVE piece
+                if (previous_piece_clicked != null && (getComputedStyle(new_div).backgroundColor === "rgb(248, 118, 104)" || getComputedStyle(new_div).backgroundColor === "rgb(204, 79, 73)")){
+                    hidePossibleMoves(previous_square_colored);
+                    MovePiece(previous_piece_clicked.id, new_div.id);
+                    previous_piece_clicked = null;
                 }
                 // Piece displayed | Display Piece
                 else if (previous_piece_clicked != null && new_div.style.backgroundImage !== "" && new_div !== previous_piece_clicked){
-                    console.log("two");
-                    onPieceClick(previous_piece_clicked, "Hide");
-                    onPieceClick(new_div, "Display");
+                    hidePossibleMoves(previous_square_colored);
+                    onPieceClick(new_div);
                     previous_piece_clicked = new_div;
                 }
                 // Piece displayed | Hide piece
                 else if(new_div === previous_piece_clicked || (previous_piece_clicked != null && getComputedStyle(new_div).backgroundColor !== "rgb(248, 118, 104)" && getComputedStyle(new_div).backgroundColor !== "rgb(204, 79, 73)")){
-                    console.log("three");
-                    onPieceClick(previous_piece_clicked, "Hide");
+                    hidePossibleMoves(previous_square_colored);
                     previous_piece_clicked = null;
                 }
-                // Piece displayed | MOVE piece
-                else if (previous_piece_clicked != null && (getComputedStyle(new_div).backgroundColor === "rgb(248, 118, 104)" || getComputedStyle(new_div).backgroundColor === "rgb(204, 79, 73)")){
-                    onPieceClick(previous_piece_clicked, "Hide");
-                    MovePiece(previous_piece_clicked.id, new_div.id);
-                    previous_piece_clicked = null;
+                // No other piece displayed | Display piece
+                else if (previous_piece_clicked == null && new_div.style.backgroundImage !== ""){
+                    previous_piece_clicked = new_div;
+                    onPieceClick(new_div);
                 }
             }
 
@@ -152,8 +164,13 @@
         }
     }
 
+    function getCurrentGameId() {
+        const pathParts = window.location.pathname.split('/');
+        return pathParts[pathParts.length - 1]; // Game ID is the last part of the path
+    }
+
     // Display the moves
-    function onPieceClick(pieceElement, action) {
+    function onPieceClick(pieceElement) {
         const position = pieceElement.id;
         const gameId = getCurrentGameId();
 
@@ -169,14 +186,34 @@
         })
             .then(response => response.json())
             .then(moves => {
-                if (action === "Display") highlightPossibleMoves(moves);
-                else if (action === "Hide") hidePossibleMoves(moves);
+               highlightPossibleMoves(moves);
+               previous_square_colored = moves;
             })
             .catch(error => {
                 console.error("Error getting moves:", error);
             });
     }
+    function highlightPossibleMoves(moves){
+        for (let i in moves){
+            let square = document.getElementById(moves[i]);
+            let row = parseInt(moves[i][1]);
+            let col = moves[i][0].charCodeAt(0) - 64;
+            if ((row+col) % 2) square.style.backgroundColor = "#f87668";
+            else square.style.backgroundColor = "#cc4f49";
+        }
+    }
 
+    function hidePossibleMoves(moves){
+        for (let i in moves){
+            let square = document.getElementById(moves[i]);
+            let row = parseInt(moves[i][1]);
+            let col = moves[i][0].charCodeAt(0) - 64;
+            if ((row+col) % 2) square.style.backgroundColor = "#f0d9b5";
+            else square.style.backgroundColor = "#b58863";
+        }
+    }
+
+    // Commit a move
     function MovePiece(source, destination){
         const gameId = getCurrentGameId();
         fetch('/PieceMoves', {
@@ -191,61 +228,171 @@
             })
         })
             .then(response => response.json())
-            .then(moves => {
-                console.log(moves);
+            .then(board => {
+                reDisplayBoard(board)
+                CheckPromotion(destination)
+                UpdateDatabase()
             })
             .catch(error => {
                 console.error("Error getting moves:", error);
             });
     }
 
-    function getCurrentGameId() {
-        const pathParts = window.location.pathname.split('/');
-        return pathParts[pathParts.length - 1]; // Game ID is the last part of the path
-    }
-    function highlightPossibleMoves(moves){
-        for (let i in moves){
-            let square = document.getElementById(moves[i]);
-            let row = parseInt(moves[i][1]);
-            let col = moves[i][0].charCodeAt(0) - 64;
-            if ((row+col) % 2) square.style.backgroundColor = "#f87668";
-            else square.style.backgroundColor = "#cc4f49";
+    // Actualization Board
+    function reDisplayBoard(board){
+        for (let i = 8; i >= 1; i--) {
+            for (let j = 0; j <= 7; j++) {
+                let aux = document.getElementById(`${letters[j]}${i}`);
+                if (board[i][j+1] != null){
+                    switch (board[i][j+1].color) {
+                        case "Black":
+                            switch (board[i][j+1].type) {
+                                case "Pawn":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/bp.png')";
+                                    break;
+                                case "Knight":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/bn.png')";
+                                    break;
+                                case "Bishop":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/bb.png')";
+                                    break;
+                                case "Rook":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/br.png')";
+                                    break;
+                                case "Queen":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/bq.png')";
+                                    break;
+                                case "King":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/bk.png')";
+                                    break;
+                            }
+                            break;
+                        case "White":
+                            switch (board[i][j+1].type) {
+                                case "Pawn":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wp.png')";
+                                    break;
+                                case "Knight":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wn.png')";
+                                    break;
+                                case "Bishop":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wb.png')";
+                                    break;
+                                case "Rook":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wr.png')";
+                                    break;
+                                case "Queen":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wq.png')";
+                                    break;
+                                case "King":
+                                    aux.style.backgroundImage = "url('/Photos/Chess_pieces/wk.png')";
+                                    break;
+                            }
+                            break;
+                    }
+                }else{
+                    aux.style.backgroundImage = "";
+                }
+            }
         }
     }
-    function hidePossibleMoves(moves){
-        for (let i in moves){
-            let square = document.getElementById(moves[i]);
-            let row = parseInt(moves[i][1]);
-            let col = moves[i][0].charCodeAt(0) - 64;
-            if ((row+col) % 2) square.style.backgroundColor = "#f0d9b5";
-            else square.style.backgroundColor = "#b58863";
-        }
-    }
-    // Commit a move
 
-
-
-
-    // Dark/Light mode
-    if (localStorage.getItem("Screen") === "light") {
-        document.body.style.backgroundColor = "#d3d3d3";
-        document.getElementById("game-statistics-p").style.color = "#1a1a1a"
-    } else if (localStorage.getItem("Screen") === "dark") {
-        document.body.style.backgroundColor = "#1a1a1a";
-        document.getElementById("game-statistics-p").style.color = "#fcfcfc"
+    // Pawn promotion scenario
+    function showPromotionModal() {
+        document.getElementById("promotionModal").style.display = "block";
     }
 
-    document.getElementById("UI-COLOR").onclick = function () {
-        const currentBg = getComputedStyle(document.body).backgroundColor;
-        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
-            document.body.style.backgroundColor = "#1a1a1a";
-            document.getElementById("game-statistics-p").style.color = "#fcfcfc"
-            localStorage.setItem("Screen", "dark");
-        } else {  // Light background
-            document.body.style.backgroundColor = "#d3d3d3";
-            document.getElementById("game-statistics-p").style.color = "#1a1a1a"
-            localStorage.setItem("Screen", "light");
-        }
-    };
+    function hidePromotionModal() {
+        document.getElementById("promotionModal").style.display = "none";
+    }
+
+    function CheckPromotion(destination) {
+        const gameId = getCurrentGameId();
+        fetch('/CheckPromotion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+                Destination: destination
+            })
+        }).then(response => response.json())
+            .then(value => {
+                if (value){
+                    promotionDestination = destination;
+                    showPromotionModal();
+                }else{
+                    UpdateStatistics();
+                }
+            })
+    }
+
+    function ChoosePromotion(piece_name){
+        const gameId = getCurrentGameId();
+        fetch('/ChoosePromotion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+                Destination: promotionDestination,
+                Piece_name: piece_name
+            })
+        }).then(response => response.json())
+            .then(board => {
+                reDisplayBoard(board);
+                UpdateStatistics();
+                hidePromotionModal();
+            })
+    }
+
+    // Statistics board
+    function UpdateStatistics(){
+        const gameId = getCurrentGameId();
+        fetch('/UpdateStatitics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+            })
+        })
+            .then(response => response.text())
+            .then(new_move => {
+                StatisticsActualization(new_move)
+            })
+            .catch(error => {
+                console.error("Error getting stat_move:", error);
+            });
+    }
+
+    var board_history = document.getElementById("board-history");
+    if (History.length){
+        History.forEach(aux => StatisticsActualization(aux))
+    }
+    function StatisticsActualization(aux){
+        console.log(aux);
+        const new_move = document.createElement("p");
+        if (board_history.children.length % 2 === 0) new_move.innerText = `White plays ${aux}`;
+        else new_move.innerText = `Black plays ${aux}`;
+        board_history.appendChild(new_move);
+        board_history.scrollTop = board_history.scrollHeight;
+    }
+
+    function UpdateDatabase(){
+        const gameId = getCurrentGameId();
+        fetch('/UpdateDatabase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                Id: gameId,
+            })
+        })
+    }
 </script>
 </html>

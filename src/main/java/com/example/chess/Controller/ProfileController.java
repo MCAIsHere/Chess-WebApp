@@ -20,10 +20,21 @@ public class ProfileController {
     public String Index(Model model) {
         User user = appData.Users.get(0);
         model.addAttribute("Username", user.getUsername());
-        List<User> lista = user.getFriends();
+        model.addAttribute("Data_inregistrarii", "" + user.getData_Inregistrarii().getDayOfMonth() + "." + user.getData_Inregistrarii().getMonthValue() + "." + user.getData_Inregistrarii().getYear());
+        System.out.println("" + user.getData_Inregistrarii().getDayOfMonth() + user.getData_Inregistrarii().getMonthValue() + user.getData_Inregistrarii().getYear());
+        model.addAttribute("Rating", user.getRating());
+        model.addAttribute("Games_played", user.getMatches_Played());
+        model.addAttribute("Win_rate", user.getWin_Rate().intValue());
+        model.addAttribute("Best_rating", user.getMax_Rating());
+
+        List<String> lista = user.getFriends_id();
         List<String> lista_sortata = new ArrayList<>();
-        for (User i : lista){
-            lista_sortata.add(i.getUsername());
+        for (String id : lista){
+            User aux = null;
+            for (User j : appData.Users){
+                if (j.getId().equals(id)) aux = j;
+            }
+            lista_sortata.add(aux.getUsername());
         }
         lista_sortata.sort(null);
         model.addAttribute("Friends", lista_sortata);

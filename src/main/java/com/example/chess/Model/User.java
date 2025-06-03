@@ -12,12 +12,10 @@ public class User {
     private Integer Max_Rating;
     private Integer Rating;
     private Double Win_Rate;
-
     private Integer Matches_Won;
     private Integer Matches_Lost;
     private Integer Matches_Played;
-    private List<Match> Match_History;
-    private List<User> Friends;
+    private List<String> Friends_id;
 
     public User(String Id, String Username, Byte[] ProfilePict) {
         this.Id = Id;
@@ -30,16 +28,20 @@ public class User {
         this.Matches_Won = 0;
         this.Matches_Lost = 0;
         this.Matches_Played = 0;
-        this.Match_History = new ArrayList<>();
-        this.Friends = new ArrayList<>();
+        this.Friends_id = new ArrayList<>();
     }
 
     public String getId() {return Id;}
     public String getUsername() {return Username;}
-    public List<User> getFriends(){
-        return Friends;
+    public List<String> getFriends_id(){
+        return Friends_id;
     }
-    public void AddFriend(User user){
-        Friends.add(user);
+    public LocalDate getData_Inregistrarii() {return Data_Inregistrarii;}
+    public Integer getMax_Rating() {return Max_Rating;}
+    public Integer getRating() {return Rating;}
+    public Double getWin_Rate() {return Win_Rate;}
+    public Integer getMatches_Played() {return Matches_Played;}
+    public void addFriend_id(String user_id){
+        Friends_id.add(user_id);
     }
 }

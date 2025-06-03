@@ -22,25 +22,15 @@
         </div>
 
         <div class="stats">
-            <h4 class="profile-text">Joined in: 4 Jan 2024</h4>
+            <h4 class="profile-text" th:text="'Joined in: ' + ${Data_inregistrarii}"></h4>
             <br>
             <h3 class="profile-text">Stats Overview</h3>
             <ul>
-                <li class="profile-text">Rating: 2410</li>
-                <li class="profile-text">Games Played: 320</li>
-                <li class="profile-text">Win Rate: 64%</li>
-                <li class="profile-text">Best Rating: 2480</li>
+                <li class="profile-text" th:text="'Rating : ' + ${Rating}">Rating:</li>
+                <li class="profile-text" th:text="'Games Played : ' + ${Games_played}">Games Played:</li>
+                <li class="profile-text" th:text="'Win Rate : ' + ${Win_rate}">Win Rate:</li>
+                <li class="profile-text" th:text="'Best Rating : ' + ${Best_rating}">Best Rating:</li>
             </ul>
-        </div>
-
-        <div class="recent-games">
-            <h3 class="profile-text">Recent Games</h3>
-            <ul>
-                <li class="profile-text">vs a - Win</li>
-                <li class="profile-text">vs b - Loss</li>
-                <li class="profile-text">vs c - Win</li>
-            </ul>
-            <a href="#" class="profile-text">View All</a>
         </div>
     </div>
     <div id="friends-tab">
@@ -57,41 +47,6 @@
     </div>
 </body>
 <script th:inline="javascript">
-    // Dark/Light mode
-    const profile_text = document.getElementsByClassName("profile-text");
-    if (localStorage.getItem("Screen") === "light") {
-        document.body.style.backgroundColor = "#d3d3d3";
-        for (let i = 0; i < profile_text.length; i++) {
-            profile_text[i].style.color = "black";
-        }
-        document.getElementById("profile_header").style.borderBottom = "2px solid black";
-    } else if (localStorage.getItem("Screen") === "dark") {
-        document.body.style.backgroundColor = "#1a1a1a";
-        for (let i = 0; i < profile_text.length; i++) {
-            profile_text[i].style.color = "white";
-        }
-        document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
-    }
-
-    document.getElementById("UI-COLOR").onclick = function () {
-        const currentBg = getComputedStyle(document.body).backgroundColor;
-        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
-            document.body.style.backgroundColor = "#1a1a1a";
-            localStorage.setItem("Screen", "dark");
-            for (let i = 0; i < profile_text.length; i++) {
-                profile_text[i].style.color = "white";
-            }
-            document.getElementById("profile_header").style.borderBottom = "2px solid #ccc";
-        } else {  // Light background
-            document.body.style.backgroundColor = "#d3d3d3";
-            localStorage.setItem("Screen", "light");
-            for (let i = 0; i < profile_text.length; i++) {
-                profile_text[i].style.color = "black";
-            }
-            document.getElementById("profile_header").style.borderBottom = "2px solid black";
-        }
-    };
-
     // People list
     // Friends
     const friends_tab = document.getElementById('friends-tab');

@@ -1,13 +1,10 @@
 package com.example.chess;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import java.awt.Desktop;
-import java.net.URI;
 
 @SpringBootApplication
 public class ChessApplication {
-
-    public static void main(String[] args) {
+    public static void main(String[] args){
         SpringApplication.run(ChessApplication.class, args);
         try {
             String command = "cmd.exe /c start firefox http://localhost:8080/lobby";

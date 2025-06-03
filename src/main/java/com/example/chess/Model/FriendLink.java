@@ -3,13 +3,13 @@ import java.time.LocalDate;
 import com.example.chess.Model.User;
 
 public class FriendLink {
-    private User user1;
-    private User user2;
+    private String user1_id;
+    private String user2_id;
     private LocalDate data_initiala;
 
-    public FriendLink(User user1, User user2, LocalDate data_initiala){
-        this.user1 = user1;
-        this.user2 = user2;
+    public FriendLink(String user1_id, String user2_id, LocalDate data_initiala){
+        this.user1_id = user1_id;
+        this.user2_id = user2_id;
         this.data_initiala = data_initiala;
     }
 }

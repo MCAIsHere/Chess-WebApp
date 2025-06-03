@@ -3,6 +3,7 @@
 <head>
     <title>Lobby Page</title>
     <link href="/css/lobby.css" rel="stylesheet" type="text/css">
+    <script src="/js/light_dark.js"></script>
 </head>
 <body>
     <div id="upper-bar">
@@ -23,17 +24,7 @@
     </div>
 
     <form action="/find" method="POST" id="find-match-settings" class="settings-box" style="display: none">
-        <p>Time</p>
-        <div>
-            <input type="radio" name="find_time" value="3" required><label>3 Min</label>
-            <input type="radio" name="find_time" value="5"><label>5 Min</label>
-            <input type="radio" name="find_time" value="10"><label>10 Min</label>
-        </div>
-        <p>Match type</p>
-        <div style="margin-top: 10px;">
-            <input type="radio" name="find_type" value="casual" required><label>Casual</label>
-            <input type="radio" name="find_type" value="competitive"><label>Competitive</label>
-        </div>
+        <input type="text" name="matchId" required placeholder="Match ID">
         <button type="submit">Play</button>
     </form>
     <form action="/create" method="POST" id="create-match-settings" class="settings-box" style="display: none">
@@ -47,9 +38,6 @@
         <div style="margin-top: 10px;">
             <input type="radio" name="create_type" value="casual" required><label>Casual</label>
             <input type="radio" name="create_type" value="competitive"><label>Competitive</label>
-        </div>
-        <div style="display: flex; text-align: center; margin-top: 10px;" >
-            <input type="checkbox" id="friendly-match" name="friendly" value="1"><label>Friendly match</label>
         </div>
         <button type="submit">Play</button>
     </form>
@@ -68,24 +56,6 @@
     </div>
 </body>
 <script th:inline="javascript">
-    // Dark/Light mode
-    if (localStorage.getItem("Screen") === "light") {
-        document.body.style.backgroundColor = "#d3d3d3";
-    } else if (localStorage.getItem("Screen") === "dark") {
-        document.body.style.backgroundColor = "#1a1a1a";
-    }
-
-    document.getElementById("UI-COLOR").onclick = function () {
-        const currentBg = getComputedStyle(document.body).backgroundColor;
-        if (currentBg === "rgb(211, 211, 211)") {  // Dark background
-            document.body.style.backgroundColor = "#1a1a1a";
-            localStorage.setItem("Screen", "dark");
-        } else {  // Light background
-            document.body.style.backgroundColor = "#d3d3d3";
-            localStorage.setItem("Screen", "light");
-        }
-    };
-
     // Pre-game settings
     document.getElementById("find-match").onclick = function (){
         document.getElementById("find-match-settings").style.display = "block";
