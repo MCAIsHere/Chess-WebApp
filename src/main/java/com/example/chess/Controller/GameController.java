@@ -223,6 +223,7 @@ public class GameController {
         }
         if (match == null) return null;
 
+        System.out.println(match.getIstoric());
         return match.getIstoric().getLast();
     }
 
